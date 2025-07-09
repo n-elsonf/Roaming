@@ -48,3 +48,4 @@ const UserSchema = new mongoose.Schema(
 
 // When creating a model, create a schema and then use mongoose.model to represent data object
 const User = mongoose.model("User", UserSchema);
+export default User;
