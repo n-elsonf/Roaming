@@ -106,7 +106,7 @@ const TripSchema = new mongoose.Schema(
 const PostSchema = new mongoose.Schema(
   {
     tripId: {
-      type: mongoose.Schema.type.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Trip",
       required: true,
     },
@@ -116,7 +116,7 @@ const PostSchema = new mongoose.Schema(
     },
     dayNumber: {
       type: Number,
-      required: type,
+      required: true,
       min: 1,
     },
     description: {
@@ -158,9 +158,9 @@ PostSchema.index({ tripId: 1, date: 1 }, { unique: true });
 const Category = mongoose.model("Category", CategorySchema);
 const Place = mongoose.model("Place", PlaceSchema);
 const Trip = mongoose.model("Trip", TripSchema);
-const Post = mongoose.model("Category", PostSchema);
+const Post = mongoose.model("Post", PostSchema);
 
-module.exports = {
+export {
   Category,
   Place,
   Trip,
