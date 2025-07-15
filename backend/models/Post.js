@@ -151,19 +151,18 @@ const PostSchema = new mongoose.Schema(
 );
 
 CategorySchema.index({ userId: 1, name: 1 }, { unique: true });
-PlaceSchema.index({ coordinates: '2dsphere' }); // For geospatial queries
+PlaceSchema.index({ coordinates: "2dsphere" }); // For geospatial queries
 TripSchema.index({ userId: 1, startDate: -1 });
 PostSchema.index({ tripId: 1, date: 1 }, { unique: true });
 
-const Category = mongoose.model('Category', CategorySchema);
-const Place = mongoose.model('Place', PlaceSchema);
-const Trip = mongoose.model('Trip', TripSchema);
-const Post = mongoose.model('Category', PostSchema);
-
+const Category = mongoose.model("Category", CategorySchema);
+const Place = mongoose.model("Place", PlaceSchema);
+const Trip = mongoose.model("Trip", TripSchema);
+const Post = mongoose.model("Category", PostSchema);
 
 module.exports = {
   Category,
   Place,
   Trip,
-  Post
-}
+  Post,
+};
