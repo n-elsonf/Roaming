@@ -1,77 +1,32 @@
 import mongoose from "mongoose";
-const CategorySchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    color: {
-      type: String,
-      default: "#3B82F6",
-    },
-    icon: {
-      type: String,
-      default: "map-pin",
-    },
-  },
-  { timestamps: true },
-);
 
-const PlaceSchema = new mongoose.Schema(
-  {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    placeId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    formattedAddress: {
-      type: String,
-    },
-    googleMapsUrl: {
-      type: String,
-    },
-    rating: {
-      type: Number,
-      min: 0,
-      max: 5,
-    },
-    priceLevel: {
-      type: Number,
-      min: 0,
-      max: 4,
-    },
-    categoryId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true,
-    },
-    notes: {
-      type: String,
-      default: "",
-    },
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+const PlaceSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
   },
-  { timestamps: true },
-);
+  address: {
+    type: String,
+    required: true,
+  },
+  placeId: {
+    type: String,
+    unique: true,
+    sparse: true, // Google Places ID
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: ['restaurant', 'hotel', 'attraction', 'shopping', 'transportation'],
+  },
+  rating: Number,
+  priceLevel: Number,
+  coordinates: {
+    latitude: Number,
+    longitude: Number,
+  },
+}, { timestamps: true });
 
 const TripSchema = new mongoose.Schema(
   {

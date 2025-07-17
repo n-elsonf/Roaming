@@ -5,16 +5,15 @@ import User from "../models/User.js";
 const createPost = async (req, res) => {
   try {
     const { tripId, date, dayNumber, description, places } = req.body;
-    const { id } = req.params;
-    const user = await User.findById(id);
+    const { userId } = req.user.id;
 
-    const trip = await Trip.findOne({ _id: tripId, user });
+    const trip = await Trip.findOne({ _id: tripId, userId });
     if (!trip) {
       return res.status(404).json({
         success: false,
         message: "Trip not found or not authorized",
       });
-    } zz
+    }
 
     const itineraryExists = await Post.findOne({ tripId, date });
     if (itineraryExists) {
@@ -120,13 +119,6 @@ const getPostsByPlace = async (req, res) => {
           select: 'username profilePicture' // Only get necessary user fields
         }
       })
-      .populate({
-        path: 'places.placeId',
-        populate: {
-          path: 'categoryId',
-          model: 'Category'
-        }
-      })
       .sort({ createdAt: -1 }) // Most recent first
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
@@ -181,30 +173,24 @@ const getUserPosts = async (req, res) => {
       });
     }
 
-    // Find all trips for this user
-    const userTrips = await Trip.find({ userId });
-
-    if (userTrips.length === 0) {
-      return res.status(200).json({
-        success: true,
-        message: 'No trips found for this user',
-        data: []
-      });
-    }
-
-    const tripIds = userTrips.map(trip => trip._id);
-
-    // Find all itineraries for these trips
-    const userPosts = await Post.find({ tripId: { $in: tripIds } })
-      .populate('tripId', 'name startDate endDate') // Basic trip info
+    const posts = await Post.find()
       .populate({
-        path: 'places.placeId',
-        populate: {
-          path: 'categoryId',
-          model: 'Category'
-        }
+        path: 'tripId',
+        match: { userId },
+        select: 'name startDate endDate'
       })
-      .sort({ date: -1 }); // Most recent first
+      .populate({
+        path: "places.placeId",
+        select: "name category rating address"
+      })
+      .sort({ date: -1 })
+
+    const userPosts = posts.filter(post => post.tripId !== null);
+
+    res.status(200).json({
+      success: true,
+      data: userPosts
+    })
 
     res.status(200).json({
       success: true,
