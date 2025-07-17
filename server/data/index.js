@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import User from "../models/User.js"
-import { Place, Trip, Post } from '../models/Post.js'; // Removed Category import
+import { Place, Trip, Post } from '../models/Post.js';
 
 dotenv.config();
 
@@ -69,26 +69,28 @@ const sampleTrips = [
   }
 ];
 
-// Public places - no createdBy needed since they're shared
+// Places with proper GeoJSON coordinates [longitude, latitude]
 const samplePlaces = [
   // Paris places
   {
     name: "Eiffel Tower",
     address: "Champ de Mars, 5 Avenue Anatole France, 75007 Paris, France",
-    coordinates: { latitude: 48.8584, longitude: 2.2945 },
     formattedAddress: "Eiffel Tower, Paris, France",
     rating: 4.6,
     priceLevel: 2,
     category: "attraction",
     categoryColor: "#DDA0DD",
-    placeId: "ChIJLU7jZClu5kcR4PcOOO6p3I0", // Example Google Places ID
+    placeId: "ChIJLU7jZClu5kcR4PcOOO6p3I0",
     googleMapsUrl: "https://maps.google.com/?cid=9730213807435675386",
-    notes: "Iconic iron tower and symbol of Paris"
+    notes: "Iconic iron tower and symbol of Paris",
+    coordinates: {
+      type: "Point",
+      coordinates: [2.2945, 48.8584] // [longitude, latitude]
+    }
   },
   {
     name: "Café de Flore",
     address: "172 Boulevard Saint-Germain, 75006 Paris, France",
-    coordinates: { latitude: 48.8566, longitude: 2.3322 },
     formattedAddress: "Café de Flore, Saint-Germain-des-Prés, Paris, France",
     rating: 4.2,
     priceLevel: 3,
@@ -96,12 +98,15 @@ const samplePlaces = [
     categoryColor: "#FF6B6B",
     placeId: "ChIJa147K9xx5kcRJbbat8SA1jg",
     googleMapsUrl: "https://maps.google.com/?cid=5179214637076647208",
-    notes: "Historic café frequented by famous writers and philosophers"
+    notes: "Historic café frequented by famous writers and philosophers",
+    coordinates: {
+      type: "Point",
+      coordinates: [2.3322, 48.8566] // [longitude, latitude]
+    }
   },
   {
     name: "Louvre Museum",
     address: "Rue de Rivoli, 75001 Paris, France",
-    coordinates: { latitude: 48.8606, longitude: 2.3376 },
     formattedAddress: "Louvre Museum, Paris, France",
     rating: 4.7,
     priceLevel: 2,
@@ -109,13 +114,16 @@ const samplePlaces = [
     categoryColor: "#4ECDC4",
     placeId: "ChIJD3uTd9hx5kcR1IQvGfr8dbk",
     googleMapsUrl: "https://maps.google.com/?cid=1534251142334479713",
-    notes: "World's largest art museum and historic monument"
+    notes: "World's largest art museum and historic monument",
+    coordinates: {
+      type: "Point",
+      coordinates: [2.3376, 48.8606] // [longitude, latitude]
+    }
   },
   // Tokyo places
   {
     name: "Senso-ji Temple",
     address: "2 Chome-3-1 Asakusa, Taito City, Tokyo 111-0032, Japan",
-    coordinates: { latitude: 35.7148, longitude: 139.7967 },
     formattedAddress: "Senso-ji Temple, Asakusa, Tokyo, Japan",
     rating: 4.5,
     priceLevel: 0,
@@ -123,12 +131,15 @@ const samplePlaces = [
     categoryColor: "#DDA0DD",
     placeId: "ChIJ8T1GpMGOGGARDYGSgpooDWw",
     googleMapsUrl: "https://maps.google.com/?cid=4875123894983047374",
-    notes: "Tokyo's oldest temple, founded in 628 AD"
+    notes: "Tokyo's oldest temple, founded in 628 AD",
+    coordinates: {
+      type: "Point",
+      coordinates: [139.7967, 35.7148] // [longitude, latitude]
+    }
   },
   {
     name: "Shibuya Crossing",
     address: "Shibuya City, Tokyo, Japan",
-    coordinates: { latitude: 35.6598, longitude: 139.7006 },
     formattedAddress: "Shibuya Crossing, Tokyo, Japan",
     rating: 4.3,
     priceLevel: 0,
@@ -136,12 +147,15 @@ const samplePlaces = [
     categoryColor: "#DDA0DD",
     placeId: "ChIJ69Pk6jKLGGARzDqYAByMduM",
     googleMapsUrl: "https://maps.google.com/?cid=1629644951382229763",
-    notes: "World's busiest pedestrian crossing"
+    notes: "World's busiest pedestrian crossing",
+    coordinates: {
+      type: "Point",
+      coordinates: [139.7006, 35.6598] // [longitude, latitude]
+    }
   },
   {
     name: "Sushi Jiro",
     address: "Tsukamoto Sogyo Building, 2-15 Ginza 4-chome, Chuo-ku, Tokyo",
-    coordinates: { latitude: 35.6762, longitude: 139.7671 },
     formattedAddress: "Sushi Jiro, Ginza, Tokyo, Japan",
     rating: 4.8,
     priceLevel: 4,
@@ -149,13 +163,16 @@ const samplePlaces = [
     categoryColor: "#FF6B6B",
     placeId: "ChIJrxNRX7KLGGARMeaChGFYhoE",
     googleMapsUrl: "https://maps.google.com/?cid=9241542471654047873",
-    notes: "World-renowned sushi restaurant, featured in Jiro Dreams of Sushi"
+    notes: "World-renowned sushi restaurant, featured in Jiro Dreams of Sushi",
+    coordinates: {
+      type: "Point",
+      coordinates: [139.7671, 35.6762] // [longitude, latitude]
+    }
   },
   // New York places
   {
     name: "Central Park",
     address: "New York, NY 10024, USA",
-    coordinates: { latitude: 40.7829, longitude: -73.9654 },
     formattedAddress: "Central Park, New York, NY, USA",
     rating: 4.7,
     priceLevel: 0,
@@ -163,12 +180,15 @@ const samplePlaces = [
     categoryColor: "#96CEB4",
     placeId: "ChIJ4zGFAZpYwokRGUGph3Mf37k",
     googleMapsUrl: "https://maps.google.com/?cid=2673204574830222163",
-    notes: "843-acre park in Manhattan, an urban oasis"
+    notes: "843-acre park in Manhattan, an urban oasis",
+    coordinates: {
+      type: "Point",
+      coordinates: [-73.9654, 40.7829] // [longitude, latitude]
+    }
   },
   {
     name: "Joe's Pizza",
     address: "7 Carmine St, New York, NY 10014, USA",
-    coordinates: { latitude: 40.7304, longitude: -74.0033 },
     formattedAddress: "Joe's Pizza, Greenwich Village, New York, NY, USA",
     rating: 4.4,
     priceLevel: 1,
@@ -176,12 +196,15 @@ const samplePlaces = [
     categoryColor: "#FF6B6B",
     placeId: "ChIJN5X_gFdZwokRcqx9_CqDrno",
     googleMapsUrl: "https://maps.google.com/?cid=6221842622776341110",
-    notes: "Classic New York pizza joint since 1975"
+    notes: "Classic New York pizza joint since 1975",
+    coordinates: {
+      type: "Point",
+      coordinates: [-74.0033, 40.7304] // [longitude, latitude]
+    }
   },
   {
     name: "Times Square",
     address: "Times Square, New York, NY 10036, USA",
-    coordinates: { latitude: 40.7580, longitude: -73.9855 },
     formattedAddress: "Times Square, New York, NY, USA",
     rating: 4.3,
     priceLevel: 0,
@@ -189,7 +212,11 @@ const samplePlaces = [
     categoryColor: "#DDA0DD",
     placeId: "ChIJmQJIxlVYwokRLgeuocVOGVU",
     googleMapsUrl: "https://maps.google.com/?cid=13031737157550731829",
-    notes: "Iconic commercial intersection and tourist destination"
+    notes: "Iconic commercial intersection and tourist destination",
+    coordinates: {
+      type: "Point",
+      coordinates: [-73.9855, 40.7580] // [longitude, latitude]
+    }
   }
 ];
 
@@ -332,7 +359,7 @@ async function generateData() {
     for (let i = 0; i < sampleTrips.length; i++) {
       const trip = new Trip({
         ...sampleTrips[i],
-        userId: users[i % users.length]._id // Distribute trips among users
+        userId: users[i % users.length]._id
       });
 
       const savedTrip = await trip.save();
@@ -340,14 +367,10 @@ async function generateData() {
       console.log(`Created trip: ${trip.name}`);
     }
 
-    // Create Places (these are now public/shared places)
+    // Create Places
     const places = [];
     for (const placeData of samplePlaces) {
-      // Remove createdBy since these are public places
-      const { createdBy, ...placeWithoutCreatedBy } = placeData;
-
-      const place = new Place(placeWithoutCreatedBy);
-
+      const place = new Place(placeData);
       const savedPlace = await place.save();
       places.push(savedPlace);
       console.log(`Created place: ${place.name} (${place.category})`);
@@ -357,13 +380,11 @@ async function generateData() {
     const posts = [];
     for (let i = 0; i < sampleItineraries.length; i++) {
       const itineraryData = sampleItineraries[i];
-      const trip = trips[Math.floor(i / 2)]; // 2 itineraries per trip
+      const trip = trips[Math.floor(i / 2)];
 
-      // Calculate date based on trip start date and day number
       const itineraryDate = new Date(trip.startDate);
       itineraryDate.setDate(itineraryDate.getDate() + (itineraryData.dayNumber - 1));
 
-      // Find places for this itinerary
       const itineraryPlaces = [];
       for (const placeInfo of itineraryData.places) {
         const place = places.find(p => p.name === placeInfo.placeName);
@@ -398,7 +419,6 @@ async function generateData() {
     console.log(`Created ${trips.length} trips`);
     console.log(`Created ${posts.length} itineraries`);
 
-    // Show place categories distribution
     const categoryCount = {};
     places.forEach(place => {
       categoryCount[place.category] = (categoryCount[place.category] || 0) + 1;
@@ -409,18 +429,9 @@ async function generateData() {
     });
 
     console.log('\n=== USER CREDENTIALS ===');
-    sampleUsers.forEach((user, index) => {
+    sampleUsers.forEach((user) => {
       console.log(`${user.firstName} ${user.lastName}: ${user.email} / password123`);
     });
-
-    // Show sample data structure
-    console.log('\n=== SAMPLE TRIP STRUCTURE ===');
-    const sampleTrip = trips[0];
-    const tripPosts = posts.filter(p => p.tripId.toString() === sampleTrip._id.toString());
-    console.log(`Trip: ${sampleTrip.name}`);
-    console.log(`Destination: ${sampleTrip.destination}`);
-    console.log(`Duration: ${sampleTrip.startDate.toDateString()} - ${sampleTrip.endDate.toDateString()}`);
-    console.log(`Itineraries: ${tripPosts.length} days planned`);
 
   } catch (error) {
     console.error('Error generating data:', error);
@@ -430,5 +441,4 @@ async function generateData() {
   }
 }
 
-// Run the data generation
 generateData();
