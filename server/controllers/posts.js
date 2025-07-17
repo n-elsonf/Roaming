@@ -1,4 +1,4 @@
-import { Post, Trip, Place, Category } from "../models/Post.js";
+import { Post, Trip, Place } from "../models/Post.js";
 import User from "../models/User.js";
 
 /* CREATE */

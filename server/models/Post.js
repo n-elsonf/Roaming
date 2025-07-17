@@ -18,7 +18,7 @@ const PlaceSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['restaurant', 'hotel', 'attraction', 'shopping', 'transportation'],
+    enum: ['restaurant', 'hotel', 'attraction', 'shopping', 'transportation', 'museum'],
   },
   rating: Number,
   priceLevel: Number,
@@ -105,18 +105,15 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-CategorySchema.index({ userId: 1, name: 1 }, { unique: true });
 PlaceSchema.index({ coordinates: "2dsphere" }); // For geospatial queries
 TripSchema.index({ userId: 1, startDate: -1 });
 PostSchema.index({ tripId: 1, date: 1 }, { unique: true });
 
-const Category = mongoose.model("Category", CategorySchema);
 const Place = mongoose.model("Place", PlaceSchema);
 const Trip = mongoose.model("Trip", TripSchema);
 const Post = mongoose.model("Post", PostSchema);
 
 export {
-  Category,
   Place,
   Trip,
   Post,
